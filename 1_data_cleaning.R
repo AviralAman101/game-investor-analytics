@@ -13,9 +13,6 @@ library(caret)
 library(corrplot)
 library(dplyr)
 
-
-
-
 games_data <- read.csv(
   "games.csv",
   stringsAsFactors = FALSE
@@ -25,9 +22,6 @@ head(games_data)
 str(games_data)
 names(games_data)
 dim(games_data)
-
-
-
 
 missing_count <- colSums(is.na(games_data))
 
@@ -53,8 +47,6 @@ duplicate_rows <- sum(duplicated(games_data))
 
 cat("Number of duplicate rows:", duplicate_rows, "\n")
 
-
-
 games_data <- games_data %>% distinct()
 
 cat(
@@ -73,11 +65,9 @@ games_data$User_Score[
   games_data$User_Score == "tbd"
 ] <- NA
 
-
 games_data$User_Score <- as.numeric(
   games_data$User_Score
 )
-
 
 numeric_columns <- c(
   "Year_of_Release",
@@ -96,14 +86,8 @@ games_data[numeric_columns] <- lapply(
   as.numeric
 )
 
-
 unique(games_data$User_Score)
 
 str(games_data)
-
-
-
-
-
 
 ### Data cleaning done
