@@ -14,7 +14,7 @@ library(corrplot)
 library(dplyr)
 
 games_data <- read.csv(
-  "games.csv",
+  "./games.csv",
   stringsAsFactors = FALSE
 )
 
