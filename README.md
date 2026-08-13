@@ -2,7 +2,7 @@
 
 Data-driven analytics for video game investment decisions. This project uses historical sales data from `games.csv` to help a hypothetical startup (**Sonic Gaming Systems**) answer strategic questions about genre, platform, regional launch, and expected commercial performance.
 
-The analysis is implemented as a sequence of R scripts (run in order), culminating in predictive modeling with GLM. Visual outputs and business conclusions are documented in `Presentation Games Analytics.pptx`.
+The analysis is organized into folders by phase: data cleaning, descriptive analytics, and predictive analytics. Visual outputs and business conclusions are documented in `presentation-and-docs/`.
 
 ---
 
@@ -24,7 +24,7 @@ Rather than relying on intuition alone, this project applies descriptive and pre
 
 ## Dataset
 
-**Source file:** `games.csv` (~16,719 games after cleaning)
+**Source file:** `games.csv` (project root, ~16,719 games after cleaning)
 
 | Column | Description |
 |---|---|
@@ -52,26 +52,89 @@ Rather than relying on intuition alone, this project applies descriptive and pre
 
 ## Project Structure
 
-Scripts are numbered and intended to be run sequentially. Each script builds on variables and cleaned data from prior steps.
-
 ```
 game-investor-analytics/
-├── games.csv                              # Raw dataset
-├── 1_data_cleaning.R                      # Load, inspect, and clean data
-├── 2_dataset_analysis.R                   # Basic dataset statistics & charts
-├── 3_sales_analytics.R                    # Genre-level sales analysis
-├── 4_commercial_success_by_sales.R        # Success classification & decision tree
-├── 5_regional_sale_analysis.R             # Regional market analysis
-├── predictive_analysis.R                  # GLM predictive modeling
-├── top_10.R                               # Top 10 games by global sales
-└── Presentation Games Analytics.pptx      # Full analytics report & findings
+├── games.csv                          # Raw dataset (project root)
+├── README.md
+│
+├── data-cleaning/                     # Phase 0 — data preparation
+│   └── 1_data_cleaning.R
+│
+├── descriptive-analytics/             # Phase A — exploratory & descriptive analysis
+│   ├── 2_dataset_analysis.R
+│   ├── 3_sales_analytics.R
+│   ├── 4_commercial_success_by_sales.R
+│   ├── 5_regional_sale_analysis.R
+│   └── top_10.R
+│
+├── predictive-analytics/              # Phase B — GLM models & forecasting
+│   ├── predictive_analysis.R
+│   ├── predictive_analytics_2.R
+│   ├── global_sales_prediction.R
+│   ├── prediction_test.R
+│   └── test_prediction.R
+│
+└── presentation-and-docs/             # Project deliverables & documentation
+    ├── Presentation Games Analytics.pptx
+    └── Group 7 - Strategic Game Publishing Decision Support Framework.docx
 ```
+
+---
+
+## Folder Guide
+
+### `data-cleaning/`
+
+Contains scripts that load, inspect, and prepare the raw dataset. This is the **first step** in the pipeline — all downstream analysis depends on the cleaned `games_data` object produced here.
+
+| File | Description |
+|---|---|
+| `1_data_cleaning.R` | Loads `games.csv`, summarizes missing values, removes duplicates, cleans `User_Score`, and converts numeric columns |
+
+---
+
+### `descriptive-analytics/`
+
+Contains scripts for **Phase A — Descriptive Analytics**. These explore historical patterns in the data: dataset overview, genre-level sales, commercial success rates, regional market performance, and top performers. Scripts are numbered `2`–`5` and should be run in order after data cleaning.
+
+| File | Description |
+|---|---|
+| `2_dataset_analysis.R` | Basic dataset statistics; bar chart of games by genre; lollipop chart of games by gaming system |
+| `3_sales_analytics.R` | Total, average, and median global sales by genre with visualizations |
+| `4_commercial_success_by_sales.R` | Commercial success classification, success rate by genre, Genre × Platform analysis, decision tree (`rpart`) |
+| `5_regional_sale_analysis.R` | Regional sales summary, market share pie chart, genre × region heatmap, priority market identification |
+| `top_10.R` | Top 10 games ranked by global sales (supplementary) |
+
+---
+
+### `predictive-analytics/`
+
+Contains scripts for **Phase B — Predictive Analytics**. These build GLM models to forecast commercial success and global sales, then apply those models to hypothetical game scenarios.
+
+| File | Description |
+|---|---|
+| `predictive_analysis.R` | Primary binomial GLM (`Commercial_Success ~ Gaming_System + Gaming_Era`); scenario table and top-5 platforms by era |
+| `predictive_analytics_2.R` | Model development: creates binary `Success` outcome, builds logistic GLM, tests whether Genre is statistically significant |
+| `global_sales_prediction.R` | Gamma GLM for predicting `Global_Sales`; nested model comparison to test Genre significance |
+| `prediction_test.R` | Applies fitted success model to 4 hypothetical new games |
+| `test_prediction.R` | Applies both sales and success models to 10 hypothetical test games |
+
+---
+
+### `presentation-and-docs/`
+
+Contains the **project deliverables** — the overall presentation and supporting documents. These summarize findings from both descriptive and predictive phases for stakeholders.
+
+| File | Description |
+|---|---|
+| `Presentation Games Analytics.pptx` | Full analytics report with charts, key findings, GLM results, and business recommendations |
+| `Group 7 - Strategic Game Publishing Decision Support Framework.docx` | Written project document outlining the strategic decision-support framework |
 
 ---
 
 ## Analysis Pipeline
 
-### 1. Data Cleaning (`1_data_cleaning.R`)
+### Phase 0 — Data Cleaning (`data-cleaning/1_data_cleaning.R`)
 
 Prepares `games.csv` for analysis:
 
@@ -85,86 +148,63 @@ Prepares `games.csv` for analysis:
 
 ---
 
-### 2. Dataset Analysis (`2_dataset_analysis.R`)
+### Phase A — Descriptive Analytics (`descriptive-analytics/`)
+
+#### 2. Dataset Analysis (`2_dataset_analysis.R`)
 
 Exploratory overview of the cleaned dataset:
 
 - Counts games, genres, gaming systems, publishers, and developers
 - Reports earliest and latest release years
-- **Visualizations:**
-  - Bar chart: number of games by genre
-  - Lollipop chart: number of games by gaming system
+- **Visualizations:** games by genre (bar chart), games by gaming system (lollipop chart)
 
----
+#### 3. Sales Analytics (`3_sales_analytics.R`)
 
-### 3. Sales Analytics (`3_sales_analytics.R`)
-
-Builds an analytical subset filtered on non-missing `Global_Sales`, `Genre`, and `Gaming_System`, then analyzes sales by genre:
+Builds an analytical subset filtered on non-missing `Global_Sales`, `Genre`, and `Gaming_System`:
 
 - Total, average, and median global sales per genre
-- **Visualizations:**
-  - Average global sales by genre
-  - Total global sales by genre
-  - Median global sales by genre
+- **Visualizations:** average, total, and median global sales by genre
 
 **Key insight:** Total sales alone can be misleading because genres have different numbers of games; average and median sales provide a fairer per-game comparison.
 
----
-
-### 4. Commercial Success by Sales (`4_commercial_success_by_sales.R`)
+#### 4. Commercial Success by Sales (`4_commercial_success_by_sales.R`)
 
 Classifies games as commercially successful or not, then explores drivers of success:
 
 - **Success threshold:** median global sales (~0.17M units)
-- Labels games as `"Successful"` or `"Not Successful"`
-- Computes success rate (%) by genre
-- Aggregates Genre × Gaming System combinations (minimum 10 games)
-- Builds a **regression decision tree** (`rpart`) to model average global sales by genre and platform
-
-**Visualizations:**
-
-- Commercial success rate by genre
-- Decision tree: Genre × Gaming System → expected global sales
+- Success rate (%) by genre; Genre × Gaming System aggregation (min. 10 games)
+- **Regression decision tree** (`rpart`) for average global sales by genre and platform
 
 **Key findings:**
 
 - Platform, Sports, and Shooter genres show the highest historical success rates (~58–60%)
-- Adventure, Strategy, and Puzzle show comparatively lower success rates
 - A small subset of Genre × Platform combinations (8 of 207) shows dramatically higher average sales (~2.6M vs. overall ~0.57M)
 
----
-
-### 5. Regional Sales Analysis (`5_regional_sale_analysis.R`)
+#### 5. Regional Sales Analysis (`5_regional_sale_analysis.R`)
 
 Analyzes geographic market performance to inform launch strategy:
 
-- Total, average, and median sales for North America, Europe, Japan, and Other regions
-- Market share by region
-- Genre-wise regional sales and priority market per genre
-- **Visualizations:**
-  - Pie chart: regional share of total sales
-  - Bar chart: average sales per game by region
-  - Heatmap: genre-wise regional sales
+- Total, average, and median sales by region; market share; priority market per genre
+- **Visualizations:** regional share pie chart, average sales bar chart, genre × region heatmap
 
 **Key findings:**
 
 - North America contributes ~49.4% of total recorded regional sales
 - North America and Europe are the strongest overall markets
-- Japan shows a more distinct regional preference pattern
 - Priority markets vary by genre, supporting targeted rather than uniform global launch
 
 ---
 
-### 6. Predictive Analytics (`predictive_analysis.R`)
+### Phase B — Predictive Analytics (`predictive-analytics/`)
 
-Moves from descriptive patterns to forecasting commercial success using **Generalized Linear Models (GLM)**:
+Moves from descriptive patterns to forecasting using **Generalized Linear Models (GLM)**.
 
 **Feature engineering:**
 
-- `Commercial_Success`: binary outcome (threshold = 0.17M global sales)
+- `Commercial_Success` / `Success`: binary outcome (threshold = 0.17M global sales)
 - `Gaming_Era`: release year grouped into eras (Early Era, 1995–1999, 2000–2004, 2005–2009, 2010–2014, 2015+)
 
-**Model:**
+**Primary success model** (`predictive_analysis.R`):
 
 ```r
 success_model <- glm(
@@ -174,20 +214,25 @@ success_model <- glm(
 )
 ```
 
+**Sales prediction model** (`global_sales_prediction.R`):
+
+```r
+model_sales_full <- glm(
+  Global_Sales ~ Genre + Gaming_System + Year_of_Release,
+  data = df_model,
+  family = Gamma(link = "log")
+)
+```
+
 An initial model also explored `Global_Sales ~ Genre + Gaming_System + Year_of_Release`; findings showed **Gaming System** as the strongest predictor, with Genre dropped after controlling for platform and time effects.
 
 **Outputs:**
 
 - Scenario table: predicted success probability (%) for each Gaming System × Gaming Era combination
 - Top 5 gaming systems by era ranked by success probability
+- Predicted sales and success probabilities for hypothetical test games
 
 **Approach:** Descriptive Analytics → Identify patterns → Predictive Model → Estimate future performance → Business decision
-
----
-
-### Supplementary: Top 10 Games (`top_10.R`)
-
-Ranks and displays the top 10 games by global sales (filtered for non-missing name, genre, and platform).
 
 ---
 
@@ -204,18 +249,14 @@ Ranks and displays the top 10 games by global sales (filtered for non-missing na
 
 ---
 
-## Presentation
+## Presentation & Documentation
 
-`Presentation Games Analytics.pptx` contains the full analytics report, including:
+See `presentation-and-docs/` for the full project deliverables:
 
-- Business problem and scope
-- Dataset overview and variable mapping
-- Phase A: Descriptive analytics (sales, success rates, regional analysis, decision tree)
-- Phase B: Predictive analytics (GLM models, scenario forecasts)
-- Key findings and recommendations for Sonic Gaming Systems
-- Suggested future work (interaction models, region-specific prediction, time-series forecasting)
+- **`Presentation Games Analytics.pptx`** — analytics report covering business problem, dataset overview, Phase A descriptive findings, Phase B GLM models and scenario forecasts, and recommendations for Sonic Gaming Systems
+- **`Group 7 - Strategic Game Publishing Decision Support Framework.docx`** — written framework document for the strategic decision-support approach
 
-**Author (from presentation):** Aviral Aman
+**Authors (from presentation):** Aviral Aman, Bharat Chawla, Riya Setiya, Shreya Jalgaonkar
 
 ---
 
@@ -234,6 +275,7 @@ install.packages(c(
   "rpart.plot",
   "caret",
   "corrplot",
+  "car",
   "knitr",
   "kableExtra",
   "flextable",
@@ -246,21 +288,35 @@ install.packages(c(
 ## How to Run
 
 1. Clone or download this repository.
-2. Ensure `games.csv` is in the project root directory.
-3. Open R or RStudio and set the working directory to the project folder.
-4. Run scripts in order:
+2. Ensure `games.csv` is in the **project root** directory.
+3. Open R or RStudio and set the working directory to the project root:
 
 ```r
-source("1_data_cleaning.R")
-source("2_dataset_analysis.R")
-source("3_sales_analytics.R")
-source("4_commercial_success_by_sales.R")
-source("5_regional_sale_analysis.R")
-source("predictive_analysis.R")
-source("top_10.R")   # optional
+setwd("/path/to/game-investor-analytics")
 ```
 
-> **Note:** Scripts depend on in-memory objects (`games_data`, `analysis_data`, `genre_summary`, etc.) from prior steps. Run them sequentially in the same R session.
+4. Run scripts in order within the same R session:
+
+```r
+# Phase 0 — Data Cleaning
+source("data-cleaning/1_data_cleaning.R")
+
+# Phase A — Descriptive Analytics
+source("descriptive-analytics/2_dataset_analysis.R")
+source("descriptive-analytics/3_sales_analytics.R")
+source("descriptive-analytics/4_commercial_success_by_sales.R")
+source("descriptive-analytics/5_regional_sale_analysis.R")
+source("descriptive-analytics/top_10.R")          # optional
+
+# Phase B — Predictive Analytics
+source("predictive-analytics/predictive_analytics_2.R")   # model setup & df_model
+source("predictive-analytics/global_sales_prediction.R") # Gamma GLM for sales
+source("predictive-analytics/predictive_analysis.R")      # binomial GLM for success
+source("predictive-analytics/prediction_test.R")          # optional — test scenarios
+source("predictive-analytics/test_prediction.R")          # optional — 10 test games
+```
+
+> **Note:** Scripts depend on in-memory objects (`games_data`, `analysis_data`, `df_model`, etc.) from prior steps. Run them sequentially in the same R session with the working directory set to the project root.
 
 ---
 
