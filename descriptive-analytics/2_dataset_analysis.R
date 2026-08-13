@@ -2,45 +2,57 @@
 # ============================================================
 # 1. BASIC DATASET STATISTICS
 # ============================================================
-library(ggplot2)
-
-cat("Number of games:", nrow(games_data), "\n")
+cat("Number of games:", nrow(analysis_data), "\n")
 
 cat(
   "Number of genres:",
-  length(unique(games_data$Genre)),
+  length(unique(analysis_data$Genre)),
   "\n"
 )
 
 cat(
   "Number of Gaming_System:",
-  length(unique(games_data$Gaming_System)),
+  length(unique(analysis_data$Gaming_System)),
   "\n"
 )
 
 cat(
   "Number of publishers:",
-  length(unique(games_data$Publisher)),
-  "\n"
-)
-
-cat(
-  "Number of developers:",
-  length(unique(games_data$Developer)),
+  length(unique(analysis_data$Publisher)),
   "\n"
 )
 
 cat(
   "Earliest year:",
-  min(games_data$Year, na.rm = TRUE),
+  min(analysis_data$Year_of_Release, na.rm = TRUE),
   "\n"
 )
 
+class(analysis_data$Year_of_Release)
+str(analysis_data$Year_of_Release)
+
 cat(
   "Latest year:",
-  max(games_data$Year, na.rm = TRUE),
+  max(analysis_data$Year_of_Release, na.rm = TRUE),
   "\n"
 )
+
+
+genre_summary <- analysis_data %>%
+  group_by(Genre) %>%
+  summarise(
+    Number_of_Games = n(),
+    Total_Global_Sales =
+      sum(Global_Sales, na.rm = TRUE),
+    Average_Global_Sales =
+      mean(Global_Sales, na.rm = TRUE),
+    Median_Global_Sales =
+      median(Global_Sales, na.rm = TRUE)
+  ) %>%
+  arrange(desc(Average_Global_Sales))
+
+print(genre_summary)
+
 
 
 ggplot(
@@ -82,6 +94,8 @@ Gaming_System_summary <- analysis_data %>%
   arrange(desc(Number_of_Games))
 
 Gaming_System_summary
+
+library(ggplot2)
 
 ggplot(
   Gaming_System_summary,

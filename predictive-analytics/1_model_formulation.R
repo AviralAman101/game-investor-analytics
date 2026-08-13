@@ -2,9 +2,19 @@ install.packages("car", dependencies = TRUE)
 library(car)
 
 
-names(games_data)
+regression_data <- analysis_data %>%
+  filter(
+    !is.na(Global_Sales),
+    !is.na(Gaming_System),
+    !is.na(Gaming_Era),
+    !is.na(Commercial_Success)
+  )
 
-df <- games_data
+names(analysis_data)
+
+df <- analysis_data
+
+
 
 # Mode to get the top performing Systems in various eras
 success_model <- glm(

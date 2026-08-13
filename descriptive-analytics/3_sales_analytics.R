@@ -7,20 +7,6 @@ library(tidyverse)
 library(ggplot2)
 
 
-genre_summary <- analysis_data %>%
-  group_by(Genre) %>%
-  summarise(
-    Number_of_Games = n(),
-    Total_Global_Sales =
-      sum(Global_Sales, na.rm = TRUE),
-    Average_Global_Sales =
-      mean(Global_Sales, na.rm = TRUE),
-    Median_Global_Sales =
-      median(Global_Sales, na.rm = TRUE)
-  ) %>%
-  arrange(desc(Average_Global_Sales))
-
-print(genre_summary)
 
 # Average Sales Chart
 ggplot(
@@ -32,6 +18,10 @@ ggplot(
   )
 ) +
   geom_col() +
+  geom_text(
+    aes(label = round(Average_Global_Sales, 2)),
+    hjust = -0.2
+  ) 
   coord_flip() +
   labs(
     title = "Average Global Sales by Genre",

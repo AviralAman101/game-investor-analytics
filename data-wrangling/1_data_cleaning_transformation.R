@@ -23,6 +23,8 @@ str(games_data)
 names(games_data)
 dim(games_data)
 
+games_data$Year_of_Release <- as.numeric(games_data$Year_of_Release)
+
 missing_count <- colSums(is.na(games_data))
 
 missing_percentage <- 
@@ -39,6 +41,9 @@ missing_summary <- missing_summary %>%
 
 print(missing_summary)
 
+# Since none of the columns which are used in ML models are empty or null, 
+# so we do not eliminate null variables
+
 # ============================================================
 # 4. DUPLICATE ANALYSIS
 # ============================================================
@@ -46,6 +51,7 @@ print(missing_summary)
 duplicate_rows <- sum(duplicated(games_data))
 
 cat("Number of duplicate rows:", duplicate_rows, "\n")
+# 0 duplicates
 
 games_data <- games_data %>% distinct()
 
@@ -55,45 +61,7 @@ cat(
   "\n"
 )
 
-# ============================================================
-# 5. CHECK USER SCORE
-# ============================================================
 
-unique(games_data$User_Score)
-
-games_data$User_Score[
-  games_data$User_Score == "tbd"
-] <- NA
-
-games_data$User_Score <- as.numeric(
-  games_data$User_Score
-)
-
-numeric_columns <- c(
-  "Year_of_Release",
-  "NA_Sales",
-  "EU_Sales",
-  "JP_Sales",
-  "Other_Sales",
-  "Global_Sales",
-  "Critic_Score",
-  "Critic_Count",
-  "User_Count"
-)
-
-games_data[numeric_columns] <- lapply(
-  games_data[numeric_columns],
-  as.numeric
-)
-
-unique(games_data$User_Score)
-
-str(games_data)
-
-### Data cleaning done
-
-
-##Start Transformation
 
 
 analysis_data <- games_data
@@ -102,12 +70,35 @@ analysis_data <- games_data
 analysis_data <- analysis_data %>%
   filter(
     !is.na(Global_Sales),
-    !is.na(Genre),
-    !is.na(Gaming_System)
+    !is.na(Genre) & Genre != "",
+    !is.na(Gaming_System) & Gaming_System != "",
+    !is.na(Year_of_Release),
+    !is.na(Publisher) & Publisher != ""
   )
 
 dim(analysis_data)
+# [number of rows, number of columns]
+# [1] 16448    18
 
+### Data cleaning done
+
+
+##Start Transformation
+
+#Encode and transoform 
+
+#Encode existing columns
+analysis_data$Genre <- as.factor(analysis_data$Genre)
+
+analysis_data$Gaming_System <- as.factor(analysis_data$Gaming_System)
+analysis_data$Publisher <- as.factor(analysis_data$Publisher)
+analysis_data$Rating <- as.factor(analysis_data$Rating)
+
+
+
+sales_threshold <- median(analysis_data$Global_Sales)
+
+sales_threshold
 
 analysis_data$Commercial_Success <- ifelse(
   analysis_data$Global_Sales >= sales_threshold,
@@ -117,26 +108,28 @@ analysis_data$Commercial_Success <- ifelse(
 
 
 
-games_data <- games_data %>%
-  mutate(
-    Commercial_Success = ifelse(
-      Global_Sales >= 0.17,
-      "Successful",
-      "Not Successful"
-    )
-  )
+# games_data <- games_data %>%
+#   mutate(
+#     Commercial_Success = ifelse(
+#       Global_Sales >= 0.17,
+#       "Successful",
+#       "Not Successful"
+#     )
+#   )
 
 
-games_data$Commercial_Success <- factor(
-  games_data$Commercial_Success,
+analysis_data$Commercial_Success <- factor(
+  analysis_data$Commercial_Success,
   levels = c("Not Successful", "Successful")
 )
 
-table(games_data$Commercial_Success)
+head(analysis_data)
+
+table(analysis_data$Commercial_Success)
 
 
 
-games_data <- games_data %>%
+analysis_data <- analysis_data %>%
   mutate(
     Gaming_Era = case_when(
       Year_of_Release < 1995 ~ "Early Era",
@@ -147,3 +140,9 @@ games_data <- games_data %>%
       TRUE ~ "2015+"
     )
   )
+
+
+analysis_data$Gaming_Era <- factor(
+  analysis_data$Gaming_Era,
+  levels = c("Early Era", "1995-1999", "2000-2004", "2005-2009", "2010-2014")
+)

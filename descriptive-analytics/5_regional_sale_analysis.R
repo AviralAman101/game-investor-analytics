@@ -144,44 +144,44 @@ priority_market_summary <- genre_region_summary %>%
 priority_market_summary
 
 
-library(tidyr)
-library(ggplot2)
+# library(tidyr)
+# library(ggplot2)
 
-genre_region_long <- genre_region_summary %>%
-  select(
-    Genre,
-    NA_Sales,
-    EU_Sales,
-    JP_Sales,
-    Other_Sales
-  ) %>%
-  pivot_longer(
-    cols = c(
-      NA_Sales,
-      EU_Sales,
-      JP_Sales,
-      Other_Sales
-    ),
-    names_to = "Region",
-    values_to = "Sales"
-  )
+# genre_region_long <- genre_region_summary %>%
+#   select(
+#     Genre,
+#     NA_Sales,
+#     EU_Sales,
+#     JP_Sales,
+#     Other_Sales
+#   ) %>%
+#   pivot_longer(
+#     cols = c(
+#       NA_Sales,
+#       EU_Sales,
+#       JP_Sales,
+#       Other_Sales
+#     ),
+#     names_to = "Region",
+#     values_to = "Sales"
+#   )
 
-ggplot(
-  genre_region_long,
-  aes(
-    x = Region,
-    y = Genre,
-    fill = Sales
-  )
-) +
-  geom_tile() +
-  geom_text(
-    aes(label = round(Sales, 1))
-  ) +
-  labs(
-    title = "Genre-wise Regional Sales",
-    x = "Geographic Market",
-    y = "Genre",
-    fill = "Sales (M)"
-  ) +
-  theme_minimal()
+# ggplot(
+#   genre_region_long,
+#   aes(
+#     x = Region,
+#     y = Genre,
+#     fill = Sales
+#   )
+# ) +
+#   geom_tile() +
+#   geom_text(
+#     aes(label = round(Sales, 1))
+#   ) +
+#   labs(
+#     title = "Genre-wise Regional Sales",
+#     x = "Geographic Market",
+#     y = "Genre",
+#     fill = "Sales (M)"
+#   ) +
+#   theme_minimal()

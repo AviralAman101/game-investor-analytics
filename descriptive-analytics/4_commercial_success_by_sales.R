@@ -20,13 +20,6 @@ cat(
 
 
 
-analysis_data$Commercial_Success <- as.factor(
-  analysis_data$Commercial_Success
-)
-
-table(analysis_data$Commercial_Success)
-
-
 # Calcuate no of games by each Genre that are above Median sales 
 #and get it as a percentage of total games in the Genre
 genre_summary %>%
