@@ -29,6 +29,9 @@ analysis_data$Commercial_Success <- as.factor(
 
 table(analysis_data$Commercial_Success)
 
+
+# Calcuate no of games by each Genre that are above Median sales 
+#and get it as a percentage of total games in the Genre
 genre_summary %>%
   arrange(desc(Median_Global_Sales))
 
@@ -48,43 +51,6 @@ genre_success <- analysis_data %>%
   arrange(desc(Success_Rate))
 
 genre_success
-
-
-# library(ggplot2)
-
-# ggplot(
-#   genre_summary %>%
-#     filter(Genre != ""),
-#   aes(
-#     x = reorder(Genre, Total_Global_Sales),
-#     y = Total_Global_Sales
-#   )
-# ) +
-#   geom_col() +
-#   coord_flip() +
-#   labs(
-#     title = "Total Global Sales by Genre",
-#     x = "Genre",
-#     y = "Total Global Sales (Millions)"
-#   ) +
-#   theme_minimal()
-
-# ggplot(
-#   genre_summary %>%
-#     filter(Genre != ""),
-#   aes(
-#     x = reorder(Genre, Average_Global_Sales),
-#     y = Average_Global_Sales
-#   )
-# ) +
-#   geom_col() +
-#   coord_flip() +
-#   labs(
-#     title = "Average Global Sales per Game by Genre",
-#     x = "Genre",
-#     y = "Average Global Sales (Millions)"
-#   ) +
-#   theme_minimal()
 
 
 # Success Rate Graph
@@ -112,16 +78,20 @@ ggplot(
 
 
 
-genre_platform_data <- analysis_data %>%
+# Tree for Gaming_system x Genre comparison
+
+
+# Grop genre X Gaming_system
+genre_Gaming_System_data <- analysis_data %>%
   filter(
     !is.na(Genre),
     Genre != "",
-    !is.na(Platform),
-    Platform != "",
+    !is.na(Gaming_System),
+    Gaming_System != "",
     !is.na(Global_Sales),
     !is.na(Commercial_Success)
   ) %>%
-  group_by(Genre, Platform) %>%
+  group_by(Genre, Gaming_System) %>%
   summarise(
     Number_of_Games = n(),
     Total_Global_Sales = sum(Global_Sales, na.rm = TRUE),
@@ -134,8 +104,8 @@ genre_platform_data <- analysis_data %>%
   ) %>%
   filter(Number_of_Games >= 10)
 
-head(genre_platform_data, 20)
-nrow(genre_platform_data)
+head(genre_Gaming_System_data, 20)
+nrow(genre_Gaming_System_data)
 
 
 overall_median <- median(
@@ -145,14 +115,17 @@ overall_median <- median(
 
 overall_median
 
-genre_platform_data <- genre_platform_data %>%
+
+
+# Calculate Sale Band
+genre_Gaming_System_data <- genre_Gaming_System_data %>%
   mutate(
     Sales_vs_Median =
       Average_Global_Sales / overall_median
   )
-genre_platform_data
+genre_Gaming_System_data
 
-genre_platform_data <- genre_platform_data %>%
+genre_Gaming_System_data <- genre_Gaming_System_data %>%
   mutate(
     Sales_Band = cut(
       Sales_vs_Median,
@@ -175,10 +148,15 @@ genre_platform_data <- genre_platform_data %>%
       )
     )
   )
+
+
+# Plot Tree
 library(rpart.plot)
+
+
 sales_tree <- rpart(
-  Average_Global_Sales ~ Genre + Platform,
-  data = genre_platform_data,
+  Average_Global_Sales ~ Genre + Gaming_System,
+  data = genre_Gaming_System_data,
   method = "anova",
   control = rpart.control(
     cp = 0.01,
@@ -193,5 +171,50 @@ rpart.plot(
   type = 2,
   extra = 101,
   fallen.leaves = TRUE,
-  main = "Genre × Platform — Expected Global Sales"
+  main = "Genre × genre_Gaming_System_data — Expected Global Sales"
 )
+
+
+
+
+
+sales_tree$frame[, c("var", "n", "yval")]
+
+tree_frame$node_id <- as.numeric(rownames(tree_frame))
+
+node_8_row <- which(sales_tree$frame$n == 8)
+
+node_8_row
+terminal_nodes <- sales_tree$where
+
+n8_data <- genre_Gaming_System_data[
+  terminal_nodes == node_8_row,
+]
+
+n8_data
+
+nrow(n8_data)
+
+
+node_8_row <- which(
+  sales_tree$frame$n == 8 &
+  sales_tree$frame$var == "<leaf>"
+)
+
+n8_data <- genre_Gaming_System_data[
+  sales_tree$where == node_8_row,
+]
+
+n8_data
+
+n8_data %>%
+  select(
+    Genre,
+    Gaming_System,
+    Number_of_Games,
+    Total_Global_Sales,
+    Average_Global_Sales,
+    Median_Global_Sales,
+    Success_Rate
+  ) %>%
+  arrange(desc(Average_Global_Sales))
