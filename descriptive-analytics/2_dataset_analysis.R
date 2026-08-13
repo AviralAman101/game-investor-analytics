@@ -2,7 +2,8 @@
 # ============================================================
 # 1. BASIC DATASET STATISTICS
 # ============================================================
-analysis_data <- games_data
+library(ggplot2)
+
 cat("Number of games:", nrow(games_data), "\n")
 
 cat(
@@ -81,8 +82,6 @@ Gaming_System_summary <- analysis_data %>%
   arrange(desc(Number_of_Games))
 
 Gaming_System_summary
-
-library(ggplot2)
 
 ggplot(
   Gaming_System_summary,

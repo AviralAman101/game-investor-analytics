@@ -3,21 +3,8 @@
 # ============================================================
 
 library(dplyr)
-
-analysis_data <- games_data
-
-
-analysis_data <- analysis_data %>%
-  filter(
-    !is.na(Global_Sales),
-    !is.na(Genre),
-    !is.na(Gaming_System)
-  )
-
-dim(analysis_data)
-
-
 library(tidyverse) 
+library(ggplot2)
 
 
 genre_summary <- analysis_data %>%
@@ -94,7 +81,6 @@ genre_summary <- analysis_data %>%
 
 (genre_summary)
 
-library(ggplot2)
 
 #Median Sales Chart
 ggplot(

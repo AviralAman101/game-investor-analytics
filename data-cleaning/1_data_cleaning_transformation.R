@@ -91,3 +91,26 @@ unique(games_data$User_Score)
 str(games_data)
 
 ### Data cleaning done
+
+
+##Start Transformation
+
+
+analysis_data <- games_data
+
+
+analysis_data <- analysis_data %>%
+  filter(
+    !is.na(Global_Sales),
+    !is.na(Genre),
+    !is.na(Gaming_System)
+  )
+
+dim(analysis_data)
+
+
+analysis_data$Commercial_Success <- ifelse(
+  analysis_data$Global_Sales >= sales_threshold,
+  "Successful",
+  "Not Successful"
+)

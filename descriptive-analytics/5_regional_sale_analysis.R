@@ -1,3 +1,14 @@
+install.packages("knitr")
+install.packages("kableExtra")
+library(knitr)
+library(kableExtra)
+install.packages("flextable")
+
+library(flextable)
+install.packages("flextable", dependencies = TRUE)
+install.packages("openssl")
+library(ggplot2)
+
 regional_summary <- data.frame(
   Region = c(
     "North America",
@@ -36,10 +47,9 @@ regional_summary
 
 
 
-library(ggplot2)
+
 
 # Bar chart total sales we need to replace this with pie chart
-library(ggplot2)
 
 ggplot(
   regional_summary,
@@ -94,15 +104,7 @@ ggplot(
   expand_limits(
     y = max(regional_summary$Average_Sales) * 1.1
   )
-install.packages("knitr")
-install.packages("kableExtra")
-library(knitr)
-library(kableExtra)
-install.packages("flextable")
 
-library(flextable)
-install.packages("flextable", dependencies = TRUE)
-install.packages("openssl")
 
 genre_region_summary <- analysis_data %>%
   filter(

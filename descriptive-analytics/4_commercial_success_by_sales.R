@@ -2,6 +2,8 @@
 # ============================================================
 # COMMERCIAL SUCCESS CLASSIFICATION
 # ============================================================
+library(rpart.plot)
+
 
 sales_threshold <- median(
   analysis_data$Global_Sales,
@@ -17,11 +19,6 @@ cat(
 )
 
 
-analysis_data$Commercial_Success <- ifelse(
-  analysis_data$Global_Sales >= sales_threshold,
-  "Successful",
-  "Not Successful"
-)
 
 analysis_data$Commercial_Success <- as.factor(
   analysis_data$Commercial_Success
@@ -151,7 +148,6 @@ genre_Gaming_System_data <- genre_Gaming_System_data %>%
 
 
 # Plot Tree
-library(rpart.plot)
 
 
 sales_tree <- rpart(
