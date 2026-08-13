@@ -137,9 +137,6 @@ genre_region_summary$Priority_Market <- apply(
 
 genre_region_summary
 
-
-
-
 priority_market_summary <- genre_region_summary %>%
   count(Priority_Market) %>%
   arrange(desc(n))

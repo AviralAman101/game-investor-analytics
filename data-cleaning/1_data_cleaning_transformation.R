@@ -114,3 +114,36 @@ analysis_data$Commercial_Success <- ifelse(
   "Successful",
   "Not Successful"
 )
+
+
+
+games_data <- games_data %>%
+  mutate(
+    Commercial_Success = ifelse(
+      Global_Sales >= 0.17,
+      "Successful",
+      "Not Successful"
+    )
+  )
+
+
+games_data$Commercial_Success <- factor(
+  games_data$Commercial_Success,
+  levels = c("Not Successful", "Successful")
+)
+
+table(games_data$Commercial_Success)
+
+
+
+games_data <- games_data %>%
+  mutate(
+    Gaming_Era = case_when(
+      Year_of_Release < 1995 ~ "Early Era",
+      Year_of_Release < 2000 ~ "1995-1999",
+      Year_of_Release < 2005 ~ "2000-2004",
+      Year_of_Release < 2010 ~ "2005-2009",
+      Year_of_Release < 2015 ~ "2010-2014",
+      TRUE ~ "2015+"
+    )
+  )
