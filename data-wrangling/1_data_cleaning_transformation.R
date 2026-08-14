@@ -1,9 +1,10 @@
 
-# install.packages("tidyverse")
-# install.packages("rpart")
-# install.packages("rpart.plot")
-# install.packages("caret")
-# install.packages("corrplot")
+#install.packages("tidyverse")
+#install.packages("rpart")
+#install.packages("rpart.plot")
+#install.packages("caret")
+#install.packages("corrplot")
+#install.packages("prodlim")
 
 # Load libraries
 library(tidyverse)
@@ -78,7 +79,7 @@ analysis_data <- analysis_data %>%
 
 dim(analysis_data)
 # [number of rows, number of columns]
-# [1] 16448    18
+# [1] a    18
 
 ### Data cleaning done
 
