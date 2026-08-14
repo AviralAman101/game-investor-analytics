@@ -79,10 +79,9 @@ analysis_data <- analysis_data %>%
 
 dim(analysis_data)
 # [number of rows, number of columns]
-# [1] a    18
-
+# [1] 16648    18
+dim
 ### Data cleaning done
-
 
 ##Start Transformation
 
@@ -145,5 +144,5 @@ analysis_data <- analysis_data %>%
 
 analysis_data$Gaming_Era <- factor(
   analysis_data$Gaming_Era,
-  levels = c("Early Era", "1995-1999", "2000-2004", "2005-2009", "2010-2014")
+  levels = c("Early Era", "1995-1999", "2000-2004", "2005-2009", "2010-2014", "2015+")
 )

@@ -38,7 +38,7 @@ table(df$Success)  # check class balance
 # ============================================
 
 model_cols <- c("Success", "Global_Sales", "Genre", "Gaming_System",
-                 "Publisher", "Gaming_Era", "Rating")
+                 "Publisher", "Gaming_Era")
 
 df_model <- df[complete.cases(df[, model_cols]), model_cols]
 
@@ -67,6 +67,8 @@ model_success_full_without_publisher <- glm(
   family = binomial(link = "logit")
 )
 
+
+summary(model_success_full_without_publisher)
 
 install.packages("carData")
 
